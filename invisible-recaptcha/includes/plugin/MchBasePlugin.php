@@ -21,21 +21,6 @@ abstract class MchBasePlugin
 	protected static $PLUGIN_NAME = null;
 	protected static $PLUGIN_ABBR = null;
 
-	protected function __construct()
-	{
-		add_action('init', array($this, 'initializePlugin' ), 0);
-	}
-
-	public function initializePlugin()
-	{
-		$locale = \apply_filters('plugin_locale', get_locale(), self::$PLUGIN_SLUG);
-
-		\load_textdomain(self::$PLUGIN_SLUG, trailingslashit( WP_LANG_DIR ) . self::$PLUGIN_SLUG . DIRECTORY_SEPARATOR . self::$PLUGIN_SLUG . '-' . $locale . '.mo' );
-
-		\load_plugin_textdomain(self::$PLUGIN_SLUG, false, self::$PLUGIN_SLUG . DIRECTORY_SEPARATOR . 'languages' . DIRECTORY_SEPARATOR );
-
-	}
-
 	public static function isNetworkActivated()
 	{
 		static $isNetworkActivated = null;

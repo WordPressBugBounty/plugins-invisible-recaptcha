@@ -84,6 +84,7 @@ class WordPressPublicModule extends BasePublicModule
 	public function validateRegisterMultiSiteRequest($results)
 	{
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- just checking stage
 		if (isset($_POST['stage']) && 'validate-blog-signup' == $_POST['stage'])
 			return $results;
 
@@ -92,7 +93,7 @@ class WordPressPublicModule extends BasePublicModule
 
 		empty($results['errors']) || !is_wp_error($results['errors']) ? $results['errors'] = new \WP_Error() : null;
 
-		$results['errors']->add('invalid-token', __('Registration Error!', \InvisibleReCaptcha::PLUGIN_SLUG));
+		$results['errors']->add('invalid-token', __('Registration Error!', 'invisible-recaptcha'));
 
 		return $results;
 	}
@@ -104,7 +105,7 @@ class WordPressPublicModule extends BasePublicModule
 
 		!is_wp_error($wpError) ? $wpError = new \WP_Error() : null;
 
-		$wpError->add('gdbc-invalid-token', __('Registration Error!', \InvisibleReCaptcha::PLUGIN_SLUG));
+		$wpError->add('gdbc-invalid-token', __('Registration Error!', 'invisible-recaptcha'));
 
 		return $wpError;
 	}
@@ -142,7 +143,7 @@ class WordPressPublicModule extends BasePublicModule
 
 		return BasePublicModule::isRecaptchaValid()
 				? $wpUser
-				: new \WP_Error(\InvisibleReCaptcha::PLUGIN_SLUG,  __('Invalid username or incorrect password!', \InvisibleReCaptcha::PLUGIN_SLUG));
+				: new \WP_Error(\InvisibleReCaptcha::PLUGIN_SLUG,  __('Invalid username or incorrect password!', 'invisible-recaptcha'));
 
 	}
 
@@ -161,7 +162,7 @@ class WordPressPublicModule extends BasePublicModule
 		$arrWordPressCommentsType = array('pingback' => 1, 'trackback' => 1);
 
 		if( (!empty($arrComment['comment_type']) && isset($arrWordPressCommentsType[strtolower($arrComment['comment_type'])]) ) ) {
-			wp_die( '<p>' . __( 'Link Notifications are disabled!', 'invisible-recaptcha' ) . '</p>', __( 'Comment Submission Failure' ), array( 'response' => 200 ) );
+			wp_die( '<p>' . esc_html__( 'Link Notifications are disabled!', 'invisible-recaptcha' ) . '</p>', esc_html__( 'Comment Submission Failure', 'invisible-recaptcha' ), array( 'response' => 200 ) );
 		}
 
 		$arrComment['comment_post_ID'] = (!empty($arrComment['comment_post_ID']) && is_numeric($arrComment['comment_post_ID'])) ? (int)$arrComment['comment_post_ID'] : 0;

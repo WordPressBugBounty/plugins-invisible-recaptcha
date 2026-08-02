@@ -159,13 +159,10 @@ abstract class MchBaseModule
 	 */
 	public final static function getInstance($forceNewInstance = false)
 	{
-		static $classInstance = null;
-		return (null !== $classInstance && (!$forceNewInstance)) ? $classInstance : $classInstance = new static();
+		static $arrInstances = array();
+		$calledClass = \get_called_class();
 
-//		static $arrInstances = array();
-//		$calledClass = \get_called_class();
-//
-//		return isset($arrInstances[$calledClass]) ? $arrInstances[$calledClass] : $arrInstances[$calledClass] = new $calledClass();
+		return (isset($arrInstances[$calledClass]) && (!$forceNewInstance)) ? $arrInstances[$calledClass] : $arrInstances[$calledClass] = new $calledClass();
 	}
 
 }

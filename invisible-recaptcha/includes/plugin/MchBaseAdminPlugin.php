@@ -14,8 +14,6 @@ abstract class MchBaseAdminPlugin extends MchBasePlugin
 
 	protected function __construct()
 	{
-		parent::__construct();
-
 		add_action('admin_init', array($this, 'initializeAdminPlugin'));
 
 		add_action( self::isNetworkActivated() ? 'network_admin_menu' : 'admin_menu', array( $this, 'buildPluginMenu' ), 10);
@@ -40,19 +38,16 @@ abstract class MchBaseAdminPlugin extends MchBasePlugin
 
 		$arrPageHolderClasses = array('wrap', 'container-fluid', $activeAdminPage->getPageMenuSlug());
 
-		$adminPageHtmlCode  = '<div class="' . implode(' ', $arrPageHolderClasses) . '">';
+		echo '<div class="' . esc_attr(implode(' ', $arrPageHolderClasses)) . '">';
 
-		$adminPageHtmlCode .= '<h2 class="nav-tab-wrapper">';
+		echo '<h2 class="nav-tab-wrapper">';
 
 		foreach ($this->getRegisteredAdminPages() as $adminPage) {
-			$adminPageHtmlCode .= '<a class="nav-tab' . (($adminPage->isActive()) ? ' nav-tab-active' : '') . '" href="?page=' . $adminPage->getPageMenuSlug() . '">';
-			$adminPageHtmlCode .= $adminPage->getPageMenuTitle() . '</a>';
+			echo '<a class="nav-tab' . (($adminPage->isActive()) ? ' nav-tab-active' : '') . '" href="'.esc_url('?page=' . $adminPage->getPageMenuSlug()) . '">';
+			echo esc_html($adminPage->getPageMenuTitle()) . '</a>';
 		}
 
-		$adminPageHtmlCode .= '</h2>';
-
-		echo $adminPageHtmlCode;
-
+		echo '</h2>';
 
 		if(null !== $activeAdminPage)
 		{

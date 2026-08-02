@@ -25,21 +25,4 @@ final class MchValidator
 		return $strict ? $value === (int)$value : true;
 	}
 
-	public static function isEmail($value)
-	{
-		function_exists('is_email') || require_once( ABSPATH . WPINC . '/formatting.php' );
-		return is_email($value);
-	}
-
-	public static function isURL($strUrl)
-	{
-		return (false !== \filter_var($strUrl, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED | FILTER_FLAG_HOST_REQUIRED )); //|FILTER_FLAG_PATH_REQUIRED
-	}
-
-	public static function isHexColor($colorCode)
-	{
-		$colorCode = ltrim($colorCode, '#');
-		return ctype_xdigit($colorCode) && in_array(strlen($colorCode), array(6,3));
-	}
-
 }

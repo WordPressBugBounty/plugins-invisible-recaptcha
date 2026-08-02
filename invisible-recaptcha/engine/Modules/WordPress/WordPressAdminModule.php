@@ -57,7 +57,7 @@ class WordPressAdminModule extends BaseAdminModule
 
 	public function renderModuleSettingsSectionHeader( array $arrSectionInfo ) {
 		echo '<div class="mch-settings-section-header">
-				<h3>'.__('WordPress Protection Settings', 'invisible-recaptcha').'</h3>
+				<h3>'.esc_html__('WordPress Protection Settings', 'invisible-recaptcha').'</h3>
 			</div>';
 	}
 

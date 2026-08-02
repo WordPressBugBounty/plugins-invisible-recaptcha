@@ -16,13 +16,14 @@ class BuddyPressPublicModule extends BasePublicModule
 			return;
 
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- just checking flag presence
 		empty($_POST[self::REGISTER_FLAG])     ?: $_POST['signup_submit'] = 'register';
 
 		MchWpUtils::addActionHook('bp_account_details_fields', function(){
 
 			BuddyPressPublicModule::getInstance()->renderReCaptchaHolderHtmlCode();
 
-			echo '<input type = "hidden" name = "' . BuddyPressPublicModule::REGISTER_FLAG . '" value = "1" />';
+			echo '<input type = "hidden" name = "' . esc_attr(BuddyPressPublicModule::REGISTER_FLAG) . '" value = "1" />';
 
 		}, PHP_INT_MAX);
 

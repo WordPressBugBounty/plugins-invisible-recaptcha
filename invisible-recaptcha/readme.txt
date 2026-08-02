@@ -1,18 +1,28 @@
-=== Invisible reCaptcha for WordPress===
-Contributors: mihche
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=XVC3TSGEJQP2U
+=== Invisible reCaptcha ===
+Contributors: berrypressjonhall, berrypress
 Tags: invisible reCaptcha, woocommerce invisible reCaptcha, contact form 7 invisible reCaptcha
-Requires at least: 4.0
-Tested up to: 5.4
-Stable tag: 1.2.3
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Requires at least: 4.5
+Requires PHP: 7.0
+Tested up to: 7.0
+Stable tag: 1.3.1
+License: GPLv3 or later
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
 Invisible reCaptcha for WordPress plugin helps you to protect your sites against bad spam bots using the new Invisible reCaptcha by Google.
+
+**Notice:** As of version 1.3.0, this plugin is now maintained by [@berrypress](https://profiles.wordpress.org/berrypress/).
 
 == Description ==
 
 Invisible reCaptcha for WordPress is an extremely powerful plugin which integrates the new [Invisible reCaptcha by Google](https://www.google.com/recaptcha/intro/invisible.html) with your WordPress site.
+
+= External service disclosure =
+
+This plugin is designed to integrate [reCAPTCHA by Google](https://cloud.google.com/security/products/recaptcha) into your site, which is an external third-party service used to implement security and fraud prevention measures. The plugin may communicate with the reCAPTCHA service via API and/or by loading assets on your site's frontend, resulting in data transfer with the reCAPTCHA service when the site frontend is accessed and/or when reCAPTCHA validation is triggered by to user actions. In addition to authentication and operational data such as API keys and reCAPTCHA identifiers, the service may receive information from your and your users' browser and network, such as their IP address, user agent, etc.
+
+Use of the reCAPTCHA service is subject to the [Google Cloud Terms of Service](https://cloud.google.com/terms), [Service Specific Terms](https://cloud.google.com/terms/service-term), [Google Privacy Policy](https://policies.google.com/privacy), and the [Cloud Data Processing Addendum](https://cloud.google.com/terms/data-processing-addendum).
+
+This plugin is not affiliated with or endorsed by Google.
 
 = Summary of features =
 
@@ -47,9 +57,17 @@ Invisible reCaptcha for WordPress is an extremely powerful plugin which integrat
 = Compatibility =
 On a **WP Multisite** you can either activate the plugin network wide or on a single site.
 
-= How-To and Troubleshooting =
-Check out our [Invisible reCaptcha for WordPress Support Forum](https://ultracommunity.com/forums/forum/invisible-recaptcha/)
+= How-To =
 
+Check out the Invisible reCAPTCHA v2 Guide: [https://developers.google.com/recaptcha/docs/invisible](https://developers.google.com/recaptcha/docs/invisible)
+
+1. Create a reCAPTCHA v2 site using the Invisible reCAPTCHA badge option: [https://www.google.com/recaptcha/admin/create](https://www.google.com/recaptcha/admin/create)
+2. Copy the Site Key and Secret Key from the Google reCAPTCHA admin console.
+3. In WordPress, go to Settings > Invisible reCaptcha > Settings.
+4. Enter your Site Key and Secret Key.
+5. Save the settings.
+6. In the settings, choose which forms should be protected by reCAPTCHA.
+7. Visit a page containing a protected form and verify that the reCAPTCHA badge is displayed and that form submissions are working correctly.
 
 = Extending Invisible reCaptcha =
 Here are some useful hooks to help developers integrate Invisible reCaptcha with any plugin or custom form
@@ -99,9 +117,29 @@ function myprefix_change_recaptcha_language($language_code){
 See all [reCaptcha Language Codes](https://developers.google.com/recaptcha/docs/language)
 
 
-> **Note: This plugin requires PHP 5.3 or higher to be activated.**
+> **Note: This plugin requires PHP 7.0 or higher to be activated.**
+
+== Upgrade Notice ==
+
+= 1.3.1 =
+* Maintenance release requiring PHP 7.0 or newer, updating WordPress compatibility metadata, external service disclosure, and setup documentation while removing inactive code.
+
+= 1.3.0 =
+* In accordance with current best practices, the custom CSS feature is no longer supported in this plugin. Before updating to v1.3.0+, make a copy of any custom CSS you have defined in Invisible Recaptcha settings, and use a different method to load it on the frontend of your site.
 
 == Changelog ==
+
+= 1.3.1 =
+* Removed inactive WooCommerce checkout protection code ([commit details](https://github.com/BerryPress/invisible-recaptcha/commit/0e520ef3b74d7a413a44ee69f45c14532209b622)).
+* Removed unused licensing and external module-loading infrastructure.
+* Declared PHP 7.0 as the minimum supported PHP version.
+* Updated WordPress compatibility metadata.
+* Added a link to the Google Privacy Policy to the external service disclosure.
+* Corrected the setup documentation to specify Invisible reCAPTCHA v2.
+
+= 1.3.0 =
+* PHP 8 compatibility
+* Removed the custom CSS feature
 
 = 1.2.3 =
 * Fixed class not found issue [Problem with AJAX after update](https://wordpress.org/support/topic/problem-with-ajax-after-update/)
@@ -155,4 +193,3 @@ See all [reCaptcha Language Codes](https://developers.google.com/recaptcha/docs/
 
 = 1.0 =
 * Initial release
-

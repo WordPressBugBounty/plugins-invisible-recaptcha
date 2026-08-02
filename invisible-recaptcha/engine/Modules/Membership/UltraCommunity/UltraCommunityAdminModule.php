@@ -54,17 +54,13 @@ class UltraCommunityAdminModule extends BaseAdminModule
 
 
 	public function renderModuleSettingsSectionHeader( array $arrSectionInfo ) {
-		$favIconUrl = MchBaseAdminPlugin::getPluginBaseUrl() . '/assets/admin/images/ultracommunity-favicon.png';
-		$favIconUrl = esc_url($favIconUrl);
-
 		echo '<div class="mch-settings-section-header">
 				<h3>
 
 				<a style="text-decoration: none;" href="https://wordpress.org/plugins/ultra-community/" target="_blank">
-					<img style="vertical-align:text-bottom; margin-bottom: -4px;" src = "' . $favIconUrl . '" width="28" height="28" />
 					<span>UltraCommunity</span>
 				</a>
-				'.__(' Protection Settings', 'invisible-recaptcha').'</h3>
+				'.esc_html__(' Protection Settings', 'invisible-recaptcha').'</h3>
 			</div>';
 	}
 

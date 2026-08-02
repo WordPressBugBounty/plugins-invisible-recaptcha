@@ -3,6 +3,8 @@
  * Copyright (c) 2016 Ultra Community (http://www.ultracommunity.com)
  */
 
+defined('ABSPATH') || exit;
+
 spl_autoload_register(function($className){
 
 	static $arrClassMap = array(
@@ -23,19 +25,14 @@ spl_autoload_register(function($className){
 			'InvisibleReCaptcha\MchLib\Utils\MchWpUtils'        => 'utils/MchWpUtils.php',
 			'InvisibleReCaptcha\MchLib\Utils\MchHtmlUtils'      => 'utils/MchHtmlUtils.php',
 			'InvisibleReCaptcha\MchLib\Utils\MchIPUtils'        => 'utils/MchIPUtils.php',
-			'InvisibleReCaptcha\MchLib\Utils\MchImageUtils'     => 'utils/MchImageUtils.php',
-			'InvisibleReCaptcha\MchLib\Utils\MchFileUtils'      => 'utils/MchFileUtils.php',
-			'InvisibleReCaptcha\MchLib\Utils\MchDirectoryUtils' => 'utils/MchDirectoryUtils.php',
 			'InvisibleReCaptcha\MchLib\Utils\MchValidator'      => 'utils/MchValidator.php',
 			'InvisibleReCaptcha\MchLib\Utils\MchMinifier'      => 'utils/MchMinifier.php',
 			'InvisibleReCaptcha\MchLib\Utils\MchHttpRequest'    => 'utils/MchHttpRequest.php',
-			'InvisibleReCaptcha\MchLib\Utils\FontAwesomeIconParser'    => 'utils/FontAwesomeIconParser.php',
 
 			'InvisibleReCaptcha\MchLib\WordPress\Repository\PostRepository' => 'WordPress/Repository/PostRepository.php',
 			'InvisibleReCaptcha\MchLib\WordPress\Repository\WpUserRepository' => 'WordPress/Repository/WpUserRepository.php',
 			'InvisibleReCaptcha\MchLib\WordPress\Routing\Router'            => 'WordPress/Routing/Router.php',
 			'InvisibleReCaptcha\MchLib\WordPress\CustomPostType'            => 'WordPress/CustomPostType.php',
-			'InvisibleReCaptcha\MchLib\WordPress\Uploader'                  => 'WordPress/Uploader.php',
 
 			'InvisibleReCaptcha\MchLib\Exceptions\MchLibException' => 'exceptions/MchLibException.php',
 	);
@@ -50,5 +47,5 @@ spl_autoload_register(function($className){
 
 	return file_exists($filePath) ? include $filePath : null;
 
-}, false, true );
+}, true, true );
 

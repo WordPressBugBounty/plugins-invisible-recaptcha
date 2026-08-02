@@ -1,7 +1,7 @@
 <?php
-
-
 namespace InvisibleReCaptcha\Controllers;
+
+defined('ABSPATH') || exit;
 
 
 use InvisibleReCaptcha\MchLib\Modules\MchModulesController;
@@ -101,4 +101,4 @@ class ModulesController extends MchModulesController
 
 	return file_exists($filePath) ? include $filePath : null;
 
-}, false);
+});

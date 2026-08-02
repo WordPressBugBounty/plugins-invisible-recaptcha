@@ -179,7 +179,7 @@ final class MchUtils
 
 		for($i = 0; $i < $length; $i++)
 		{
-			$randomBytes .= chr((mt_rand() ^ mt_rand()) % 256);
+			$randomBytes .= chr((wp_rand() ^ wp_rand()) % 256);
 		}
 
 		return $randomBytes;

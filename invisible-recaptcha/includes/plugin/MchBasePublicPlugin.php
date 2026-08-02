@@ -9,21 +9,13 @@ abstract class MchBasePublicPlugin extends MchBasePlugin
 {
 
 	public abstract function enqueuePublicScriptsAndStyles();
-	public abstract function registerAfterSetupThemeHooks();
+	public abstract function registerInitHooks();
 
 	protected function __construct()
 	{
-		parent::__construct();
-
 		add_action('wp_enqueue_scripts', array( $this, 'enqueuePublicScriptsAndStyles' ));
-		add_action('after_setup_theme', array( $this, 'registerAfterSetupThemeHooks' ));
+		add_action('init', array( $this, 'registerInitHooks' ));
 
-	}
-
-	public function initializePlugin()
-	{
-		parent::initializePlugin();
-		//$this->enqueuePublicScriptsAndStyles();
 	}
 
 	public static function registerShortCode($tagName, $callBackHandler)
@@ -34,7 +26,7 @@ abstract class MchBasePublicPlugin extends MchBasePlugin
 	private function __clone()
 	{}
 
-	private function __wakeup()
+	public function __wakeup()
 	{}
 
 }

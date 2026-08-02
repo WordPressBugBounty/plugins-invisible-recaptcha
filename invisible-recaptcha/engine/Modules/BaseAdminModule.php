@@ -100,7 +100,7 @@ abstract class BaseAdminModule extends MchBaseAdminModule
 			'id'    => $this->getSettingKey() . '-' . $optionName,
 		);
 
-
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 		$arrFieldAttributes = apply_filters($this->getFieldAttributesFilterName($optionName), $arrFieldAttributes);
 
 
@@ -130,18 +130,20 @@ abstract class BaseAdminModule extends MchBaseAdminModule
 		
 		$fieldOutputHtml =  MchHtmlUtils::createFormElement($arrFieldAttributes['type'], $arrFieldAttributes);
 		
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 		$fieldOutputHtml =  apply_filters($this->getFieldAttributesFilterName($optionName) . '-output-html', $fieldOutputHtml, $arrFieldAttributes);
 		
 		if(!empty($arrSettingsField['HelpText'])){
 			//$fieldOutputHtml .= '<i class="fa fa-info-circle uc-tooltip uc-help-tooltip" title="' . $arrSettingsField['HelpText'] . '"></i>';
 		}
 		
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- html output, assumed to be escaped already
 		echo $fieldOutputHtml;
 
 
 		if(!empty($arrSettingsField['Description']))
 		{
-			echo '<p class = "description">' . $arrSettingsField['Description'] . '</p>';
+			echo '<p class = "description">' . esc_html($arrSettingsField['Description']) . '</p>';
 		}
 
 	}

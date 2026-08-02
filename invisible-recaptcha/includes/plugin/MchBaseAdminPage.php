@@ -115,6 +115,7 @@ abstract class MchBaseAdminPage
 					continue;
 
 				$arrMessages[$groupIndex] = true;
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- outputs html
 				echo $message;
 				break;
 			}
@@ -146,6 +147,7 @@ abstract class MchBaseAdminPage
 
 	public function saveModulesNetworkSettingsOptions()
 	{
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- nonce checked below; just doing a string comparison
 		if( empty($_REQUEST['action']) || strcasecmp($_REQUEST['action'], 'update') !== 0 || empty($_REQUEST['_wpnonce'])  || empty($_REQUEST['option_page']))
 			return;
 
@@ -155,10 +157,11 @@ abstract class MchBaseAdminPage
 		foreach($this->groupModulesList as $groupIndex => $groupedModules)
 		{
 			$settingsGroup = $this->getSettingGroupId($groupIndex);
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- nonce checked below; just doing a string comparison
 			if(0 !== strcmp($settingsGroup, $_REQUEST['option_page']))
 				continue;
 
-			if( ! wp_verify_nonce($_REQUEST['_wpnonce'], "$settingsGroup-options") )
+			if( ! wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['_wpnonce'])), "$settingsGroup-options") )
 				continue;
 
 			foreach( ((array)$groupedModules->getGroupedModules()) as $moduleIndex => $adminModuleInstance )
@@ -167,7 +170,7 @@ abstract class MchBaseAdminPage
 					continue;
 				}
 
-				$moduleNetworkOptions = isset($_REQUEST[$adminModuleInstance->getSettingKey()]) ? (array)$_REQUEST[$adminModuleInstance->getSettingKey()] : array();
+				$moduleNetworkOptions = isset($_REQUEST[$adminModuleInstance->getSettingKey()]) ? (array) sanitize_text_field(wp_unslash($_REQUEST[$adminModuleInstance->getSettingKey()])) : array();
 				$adminModuleInstance->saveNetworkSettingOptions($moduleNetworkOptions);
 			}
 
@@ -181,7 +184,8 @@ abstract class MchBaseAdminPage
 		if(!$this->shouldRenderModulesInSubTabs())
 			return null;
 
-		$subTabModuleKey = isset( $_GET['modulekey'] ) ? $_GET['modulekey'] : null;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- just checking current key
+		$subTabModuleKey = isset( $_GET['modulekey'] ) ? sanitize_text_field(wp_unslash($_GET['modulekey'])) : null;
 		$firstModuleKey  = null;
 		$keyFound        = false;
 
@@ -228,12 +232,15 @@ abstract class MchBaseAdminPage
 
 				if(! ( $adminModuleInstance instanceof MchBaseAdminModule) )
 					continue;
-
+				
+				// phpcs:ignore WordPress.Security.NonceVerification.Missing -- just checking whether we have POST-ed data
 				if(empty($_POST) && $this->shouldRenderModulesInSubTabs() && $subTabModuleKey !== $adminModuleInstance->getSettingKey())
 					continue;
 
+				// phpcs:ignore WordPress.Security.NonceVerification.Missing -- just checking whether we have POST-ed data
 				if(!empty($_POST))
 				{
+					// phpcs:ignore WordPress.Security.NonceVerification.Missing -- just checking current key
 					if(empty($_POST['mch-module-key']) || $_POST['mch-module-key'] !== $adminModuleInstance->getSettingKey()) {
 						continue;
 					}
@@ -253,7 +260,7 @@ abstract class MchBaseAdminPage
 				}
 
 
-				register_setting($settingsGroup, $adminModuleInstance->getSettingKey(), array( $adminModuleInstance, 'validateModuleSettingsFields' ) );
+				register_setting($settingsGroup, $adminModuleInstance->getSettingKey(), ['sanitize_callback' => array( $adminModuleInstance, 'validateModuleSettingsFields' )]);
 
 				//$sectionTitle = !empty($this->arrGroupSectionTitle[$groupIndex]) ? (string)$this->arrGroupSectionTitle[$groupIndex] : '';
 
@@ -338,9 +345,10 @@ abstract class MchBaseAdminPage
 
 					$subTabName = MchModulesController::getModuleDisplayNameByInstance($adminModuleInstance);
 
+					// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 					$subTabName = apply_filters(self::FILTER_MODULE_SUBTAB_NAME, $subTabName, $adminModuleInstance, $this);
 
-					echo '<li class="' . $classAttribute . '"> <a href="' . $moduleSettingsUrl . '">' . $subTabName;
+					echo '<li class="' . esc_attr($classAttribute) . '"> <a href="' . esc_url($moduleSettingsUrl) . '">' . esc_html($subTabName);
 
 					echo '</a><span></span></li>';
 
@@ -363,10 +371,12 @@ abstract class MchBaseAdminPage
 
 		$classAttribute = implode(' ', $arrClasses );
 
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 		do_action(self::ACTION_BEFORE_SETTINGS_FORM);
 
-		echo '<form class = "'.$classAttribute.'" method="post" action="' . (MchWpUtils::isAdminInNetworkDashboard() ? '' : 'options.php') . '">';
+		echo '<form class = "'.esc_attr($classAttribute).'" method="post" action="' . (MchWpUtils::isAdminInNetworkDashboard() ? '' : 'options.php') . '">';
 
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 		do_action(self::ACTION_SETTINGS_FORM_BEFORE_FIELDS, $this, $activeAdminModuleInstance);
 
 		echo '<input type="hidden" name="mch-module-key" value="' . esc_attr($activeAdminModuleInstance->getSettingKey()) . '">';
@@ -381,10 +391,12 @@ abstract class MchBaseAdminPage
 		echo $this->shouldRenderModulesInSubTabs() ? '' : '<hr />';
 
 
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 		do_action(self::ACTION_BEFORE_SETTINGS_FORM_SUBMIT_BUTTON, $this, $activeAdminModuleInstance);
 
 		submit_button();
 
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 		do_action(self::ACTION_AFTER_SETTINGS_FORM_SUBMIT_BUTTON, $this, $activeAdminModuleInstance);
 
 		echo $this->shouldRenderModulesInSubTabs() ? '' : '<hr />';
@@ -419,44 +431,38 @@ abstract class MchBaseAdminPage
 	{
 		wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false );
 		wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false );
+?>
+		<div id="poststuff">
 
-		$code = '<div id="poststuff">';
+			<div id="post-body" class="metabox-holder columns-<?php echo(esc_attr($this->pageLayoutColumns)); ?>">
+				<div id="postbox-container-2" class="postbox-container mch-left-side-holder">
+				<?php
+					// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+					do_action( 'mch-admin-page-top', $this );
 
-		$code .= '<div id="post-body" class="metabox-holder columns-'. $this->pageLayoutColumns .'">';
-		$code .= '<div id="postbox-container-2" class="postbox-container mch-left-side-holder">';
+					do_meta_boxes($this->adminScreenId, 'top', $this );
+					do_meta_boxes($this->adminScreenId, 'normal', $this );
 
-		ob_start();
+					// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+					do_action( 'mch-admin-page-middle', $this );
 
-			do_action( 'mch-admin-page-top', $this );
+					do_meta_boxes($this->adminScreenId, 'advanced', $this ); // $this is sent as first argument to add_meta_box callback function (renderGroupModulesSettings in my case)
 
-			do_meta_boxes($this->adminScreenId, 'top', $this );
-			do_meta_boxes($this->adminScreenId, 'normal', $this );
+					do_meta_boxes($this->adminScreenId, 'bottom', $this );
 
-			do_action( 'mch-admin-page-middle', $this );
+					// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+					do_action( 'mch-admin-page-bottom', $this );
+				?>
+				</div>
 
-			do_meta_boxes($this->adminScreenId, 'advanced', $this ); // $this is sent as first argument to add_meta_box callback function (renderGroupModulesSettings in my case)
+				<div id="postbox-container-1" class="postbox-container mch-right-side-holder">
 
-			do_meta_boxes($this->adminScreenId, 'bottom', $this );
-
-			do_action( 'mch-admin-page-bottom', $this );
-
-		$code .= ob_get_clean();
-		$code .= '</div>';
-
-		$code .= '<div id="postbox-container-1" class="postbox-container mch-right-side-holder">';
-
-		ob_start();
-
-			do_meta_boxes($this->adminScreenId, 'side', null );
-
-		$code .= ob_get_clean();
-
-		$code .= '</div>';
-
-		$code .= '</div>';
-		$code .= '</div>';
-
-		echo $code;
+				<?php do_meta_boxes($this->adminScreenId, 'side', null ); ?>
+				
+				</div>
+			</div>
+		</div>
+		<?php
 	}
 
 	protected function getSettingGroupId($moduleListGroupIndex)
@@ -501,7 +507,7 @@ abstract class MchBaseAdminPage
 
 	public function getPageBrowserTitle()
 	{
-		return $this->pageBrowserTitle;
+		return $this->pageBrowserTitle ?? $this->pageMenuTitle;
 	}
 
 	public function getPageMenuTitle()
@@ -523,7 +529,7 @@ abstract class MchBaseAdminPage
 		foreach ( (array) $wp_settings_sections[$page] as $section )
 		{
 			if ( $section['title'] )
-				echo "<h2>{$section['title']}</h2>\n";
+				echo '<h2>'.esc_html($section['title']).'</h2>'."\n";
 
 			if ( $section['callback'] )
 				call_user_func( $section['callback'], $section );
@@ -548,15 +554,15 @@ abstract class MchBaseAdminPage
 		foreach ( (array) $wp_settings_fields[$page][$section] as $field )
 		{
 
-			$class = '';
+			echo '<tr';
 			if ( ! empty( $field['args']['class'] ) ) {
-				$class = ' class="' . esc_attr( $field['args']['class'] ) . '"';
+				echo ' class="' . esc_attr( $field['args']['class'] ) . '"';
 			}
-			echo "<tr{$class}>";
+			echo '>';
 			if ( ! empty( $field['args']['label_for'] ) ) {
-				echo '<th scope="row"><label for="' . esc_attr( $field['args']['label_for'] ) . '">' . $field['title'] . '</label></th>';
+				echo '<th scope="row"><label for="' . esc_attr( $field['args']['label_for'] ) . '">' . esc_html($field['title']) . '</label></th>';
 			} else {
-				echo '<th scope="row">' . $field['title'] . '</th>';
+				echo '<th scope="row">' . esc_html($field['title']) . '</th>';
 			}
 			echo '<td>';
 			call_user_func($field['callback'], $field['args']);

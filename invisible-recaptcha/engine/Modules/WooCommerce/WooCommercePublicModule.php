@@ -19,7 +19,10 @@ class WooCommercePublicModule extends BasePublicModule
 		
 		parent::__construct();
 		
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- just checking flag presence
 		empty($_POST[self::LOGIN_FLAG])        ?: $_POST['login']    = 'login';
+		
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- just checking flag presence
 		empty($_POST[self::REGISTER_FLAG])     ?: $_POST['register'] = 'register';
 		
 		
@@ -43,10 +46,6 @@ class WooCommercePublicModule extends BasePublicModule
 			$this->activateProductReviewHooks();
 		}
 		
-//		if($this->getOption(WooCommerceAdminModule::OPTION_CHECKOUT_FORM_PROTECTION_ENABLED)){
-//			$this->activateCheckOutHooks();
-//		}
-		
 	}
 
 	public function activateLoginHooks()
@@ -54,7 +53,7 @@ class WooCommercePublicModule extends BasePublicModule
 		
 		MchWpUtils::addActionHook('woocommerce_login_form_end', function(){
 			WooCommercePublicModule::getInstance()->renderReCaptchaHolderHtmlCode();
-			echo '<input type = "hidden" name = "' . WooCommercePublicModule::LOGIN_FLAG . '" value = "1" />';
+			echo '<input type = "hidden" name = "' . esc_attr(WooCommercePublicModule::LOGIN_FLAG) . '" value = "1" />';
 		}, PHP_INT_MAX);
 
 		MchWpUtils::addFilterHook('woocommerce_process_login_errors', function($wpError){
@@ -79,31 +78,13 @@ class WooCommercePublicModule extends BasePublicModule
 
 	}
 	
-	public function activateCheckOutHooks()
-	{
-		MchWpUtils::addActionHook('woocommerce_checkout_after_order_review', function(){WooCommercePublicModule::getInstance()->renderReCaptchaHolderHtmlCode();}, PHP_INT_MAX);
-		
-		MchWpUtils::addActionHook('woocommerce_before_checkout_process', function(){
-			
-			if( ! BasePublicModule::isRecaptchaValid() ){
-				throw new \Exception( __( 'Sorry, Google reCaptcha was not validated!', 'invisible-recaptcha' ) );
-			}
-			
-		}, PHP_INT_MAX);
-		
-		
-		$this->checkRegistrationHookId = $this->addFilterHook('woocommerce_process_registration_errors', array($this, 'validateRegistrationRequest'), 10, 4);
-		
-	}
-	
-	
 	public function renderTokenFieldIntoRegistrationForm()
 	{
 		if(WordPressPublicModule::getInstance()->getOption(WordPressAdminModule::OPTION_REGISTRATION_FORM_PROTECTION_ENABLED)){
 			WordPressPublicModule::getInstance()->removeRegistrationHooks();
 		}
 		
-		echo '<input type = "hidden" name = "' . WooCommercePublicModule::REGISTER_FLAG . '" value = "1" />';
+		echo '<input type = "hidden" name = "' . esc_attr(WooCommercePublicModule::REGISTER_FLAG) . '" value = "1" />';
 		$this->renderReCaptchaHolderHtmlCode();
 
 	}
@@ -146,13 +127,14 @@ class WooCommercePublicModule extends BasePublicModule
 
 		MchWpUtils::addActionHook('validate_password_reset', function(){
 			
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- just checking if POST vars were sent
 			if(empty($_POST) || function_exists('retrieve_password')) // we are in wp-login.php The request is for WP password reset
 				return;
 			
 			if( BasePublicModule::isRecaptchaValid() )
 				return;
 
-			wp_redirect(home_url('/'));
+			wp_safe_redirect(home_url('/'));
 			exit;
 
 		}, PHP_INT_MAX);
@@ -180,6 +162,7 @@ class WooCommercePublicModule extends BasePublicModule
 
 		$arrComment['comment_post_ID'] = (!empty($arrComment['comment_post_ID']) && is_numeric($arrComment['comment_post_ID'])) ? (int)$arrComment['comment_post_ID'] : 0;
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- hooked function, nonce checks assumed to be done by caller
 		if(empty($arrComment['comment_post_ID']) || empty($_POST['rating']) || absint($_POST['rating']) < 0 || absint($_POST['rating']) > 5 || 'product' !== strtolower(get_post_type($arrComment['comment_post_ID'])) )
 		{
 			return $arrComment; // not WooCommerce product review
@@ -188,7 +171,7 @@ class WooCommercePublicModule extends BasePublicModule
 		$arrWordPressCommentsType = array('pingback' => 1, 'trackback' => 1);
 
 		if( (!empty($arrComment['comment_type']) && isset($arrWordPressCommentsType[strtolower($arrComment['comment_type'])]) ) ) {
-			wp_die( '<p>' . __( 'Link Notifications are disabled!', 'invisible-recaptcha' ) . '</p>', __( 'Comment Submission Failure' ), array( 'response' => 200 ) );
+			wp_die( '<p>' . esc_html__( 'Link Notifications are disabled!', 'invisible-recaptcha' ) . '</p>', esc_html__( 'Comment Submission Failure', 'invisible-recaptcha' ), array( 'response' => 200 ) );
 		}
 
 		if(BasePublicModule::isRecaptchaValid())

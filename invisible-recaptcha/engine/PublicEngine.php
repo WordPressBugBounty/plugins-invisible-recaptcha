@@ -4,6 +4,7 @@
  */
 
 namespace InvisibleReCaptcha;
+defined('ABSPATH') || exit;
 
 use InvisibleReCaptcha\Controllers\ModulesController;
 use InvisibleReCaptcha\MchLib\Modules\MchBaseModule;
@@ -37,13 +38,11 @@ class PublicEngine extends MchBasePublicPlugin
 	public function enqueuePublicScriptsAndStyles()
 	{
 
-		$siteKey = esc_attr(SettingsPublicModule::getInstance()->getOption(SettingsAdminModule::OPTION_SITE_KEY));
-		$holderClassName = 	'.' . BasePublicModule::RECAPTCHA_HOLDER_CLASS_NAME;
+		$siteKey = wp_json_encode(SettingsPublicModule::getInstance()->getOption(SettingsAdminModule::OPTION_SITE_KEY), JSON_HEX_TAG);
+		$holderClassName = 	 wp_json_encode('.' . BasePublicModule::RECAPTCHA_HOLDER_CLASS_NAME, JSON_HEX_TAG);
 		$badgePosition   = SettingsPublicModule::getInstance()->getOption(SettingsAdminModule::OPTION_BADGE_POSITION);
 		$languageCode    = SettingsPublicModule::getInstance()->getOption(SettingsAdminModule::OPTION_LANGUAGE);
-		$customCss       = SettingsPublicModule::getInstance()->getOption(SettingsAdminModule::OPTION_BADGE_CUSTOM_CSS);
 
-		//!has_filter('google_invre_custom_css')     ?: $customCss     = apply_filters('google_invre_custom_css', $customCss);
 		!has_filter('google_invre_language_code_filter')  ?: $languageCode  = apply_filters('google_invre_language_code_filter', $languageCode);
 		!has_filter('google_invre_badge_position_filter') ?: $badgePosition = apply_filters('google_invre_badge_position_filter', $badgePosition);
 
@@ -51,6 +50,7 @@ class PublicEngine extends MchBasePublicPlugin
 		if(empty($badgePosition) || !in_array($badgePosition, array('bottomright', 'bottomleft', 'inline'))){
 			$badgePosition = 'bottomright';
 		}
+		$badgePosition = wp_json_encode($badgePosition, JSON_HEX_TAG);
 
 		if(!empty($languageCode)){
 			$arrLanguages = SettingsAdminModule::getAvailableLanguages();
@@ -59,13 +59,13 @@ class PublicEngine extends MchBasePublicPlugin
 		}
 
 
-		$inlineScript = <<<Mch
+		$inlineScript = "
 
 var renderInvisibleReCaptcha = function() {
 
     for (var i = 0; i < document.forms.length; ++i) {
         var form = document.forms[i];
-        var holder = form.querySelector('{$holderClassName}');
+        var holder = form.querySelector({$holderClassName});
 
         if (null === holder) continue;
 		holder.innerHTML = '';
@@ -73,7 +73,7 @@ var renderInvisibleReCaptcha = function() {
          (function(frm){
 			var cf7SubmitElm = frm.querySelector('.wpcf7-submit');
             var holderId = grecaptcha.render(holder,{
-                'sitekey': '{$siteKey}', 'size': 'invisible', 'badge' : '{$badgePosition}',
+                'sitekey': {$siteKey}, 'size': 'invisible', 'badge' : {$badgePosition},
                 'callback' : function (recaptchaToken) {
 					if((null !== cf7SubmitElm) && (typeof jQuery != 'undefined')){jQuery(frm).submit();grecaptcha.reset(holderId);return;}
 					 HTMLFormElement.prototype.submit.call(frm);
@@ -95,35 +95,12 @@ var renderInvisibleReCaptcha = function() {
 
         })(form);
     }
-};
-
-Mch;
-
-
-		if($this->compareWpVersions('4.5', '<')) {
-			MchWpUtils::addActionHook('wp_head', function () use ($inlineScript) {
-				echo '<script type="text/javascript">' . $inlineScript . '</script>';
-				$googleApiUrl = 'https://www.google.com/recaptcha/api.js?onload=renderInvisibleReCaptcha&render=explicit';
-				empty($language) ?: $googleApiUrl .= "&hl=$language";
-
-				echo '<script src="' . $googleApiUrl . '" async defer></script>';
-			});
-
-			return;
-		}
-
-		if(!empty($customCss))
-		{
-			foreach(array('wp_head', 'login_head') as $headAction){
-				MchWpUtils::addActionHook($headAction, function () use ($customCss) {
-					echo '<style type="text/css">' . wp_specialchars_decode($customCss, \ENT_QUOTES) . '</style>';
-				});
-			}
-		}
+};";
 
 		$googleApiUrl = 'https://www.google.com/recaptcha/api.js?onload=renderInvisibleReCaptcha&render=explicit';
 		empty($languageCode) ?: $googleApiUrl .= "&hl=$languageCode";
-
+		
+		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 		wp_enqueue_script('google-invisible-recaptcha', $googleApiUrl , array(), null, true);
 
 		wp_add_inline_script('google-invisible-recaptcha', $inlineScript, 'before');
@@ -138,13 +115,9 @@ Mch;
 	}
 
 
-	public function registerAfterSetupThemeHooks()
+	public function registerInitHooks()
 	{
 		add_action('login_enqueue_scripts', array($this, 'enqueuePublicScriptsAndStyles'));
 
-	}
-
-	private function compareWpVersions( $since, $operator ) {
-		return version_compare( str_replace( '-src', '', $GLOBALS['wp_version'] ), $since, $operator );
 	}
 }

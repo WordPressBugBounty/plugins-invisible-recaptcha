@@ -73,7 +73,7 @@ class ContactFormsAdminModule extends BaseAdminModule
 
 	public function renderModuleSettingsSectionHeader( array $arrSectionInfo ) {
 		echo '<div class="mch-settings-section-header">
-				<h3>'.__('Contact Forms Protection Settings', 'invisible-recaptcha').'</h3>
+				<h3>'.esc_html__('Contact Forms Protection Settings', 'invisible-recaptcha').'</h3>
 			</div>';
 	}
 	
@@ -95,7 +95,6 @@ class ContactFormsAdminModule extends BaseAdminModule
 			{
 				$additionalOutput = '<p class="description" style="float:left; margin:0 0 0 15px;">
 					<span style = "vertical-align: top; display:inline-block; margin-top: 22px;">Offers protection for all forms built with <a href = "https://wordpress.org/plugins/contact-form-7/">Contact Form 7</a></span>
-					<a target="_blank" href = "https://wordpress.org/plugins/contact-form-7/"><img width = "60" src = "http://ps.w.org/contact-form-7/assets/icon-256x256.png" /></a>
 				</p>';
 			}
 			
@@ -103,7 +102,6 @@ class ContactFormsAdminModule extends BaseAdminModule
 			{
 				$additionalOutput = '<p class="description" style="float:left; margin:0 0 0 15px;">
 					<span style = "vertical-align: top; display:inline-block; margin-top: 22px;">Offers protection for all forms built with <a href = "http://www.gravityforms.com/">Gravity Forms</a></span>
-					<a target="_blank" href = "http://www.gravityforms.com/"><img width = "60" height="60" src = "http://gravityforms.s3.amazonaws.com/logos/gravityforms_logo_outline_sm.png" /></a>
 				</p>';
 				
 			}

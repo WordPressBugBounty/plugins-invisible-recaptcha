@@ -117,13 +117,10 @@ abstract class MchAdminNotice
 
 		$holderClass .= $this->isDismissible() ? ' is-dismissible' : '';
 
-		$htmlCode  = '<div id="' . $this->getFormattedNoticeKey() . '" class="' . $holderClass . '" ' . 'style="border-left-color:' . $this->getHolderBorderColor() . ';' . '" >';
-		//$htmlCode .= '<p>';
-		$htmlCode .= $this->noticeMessage;
-		//$htmlCode .= '</p>';
-		$htmlCode .= '</div>';
+		echo '<div id="' . esc_attr($this->getFormattedNoticeKey()) . '" class="' . esc_attr($holderClass) . '" ' . 'style="border-left-color:' . esc_attr($this->getHolderBorderColor()) . ';' . '" >'
+				. esc_html($this->noticeMessage)
+				. '</div>';
 
-		echo $htmlCode;
 
 	}
 

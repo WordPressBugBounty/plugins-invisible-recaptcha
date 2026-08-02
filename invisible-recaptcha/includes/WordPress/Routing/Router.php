@@ -20,7 +20,7 @@ class Router
 	private function __construct()
 	{
 
-		$this->httpRequestMethod = \strtoupper($_SERVER['REQUEST_METHOD']);
+		$this->httpRequestMethod = \strtoupper(sanitize_text_field(wp_unslash($_SERVER['REQUEST_METHOD'] ?? '')));
 
 		$this->routes[$this->httpRequestMethod] = array();
 

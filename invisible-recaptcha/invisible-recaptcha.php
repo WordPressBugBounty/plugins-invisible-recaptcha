@@ -2,21 +2,23 @@
 /**
  *
  * @package   Invisible reCaptcha
- * @author    Mihai Chelaru
+ * @author    BerryPress (previously: Mihai Chelaru)
  *
  * @wordpress-plugin
  * Plugin Name: Invisible reCaptcha
- * Description: Google Invisible reCaptcha for WordPress.
- * Version: 1.2.3
- * Author: Mihai Chelaru
+ * Description: Integrate Google Invisible reCaptcha with WordPress.
+ * Version: 1.3.1
+ * Requires PHP: 7.0
+ * Author: BerryPress (previously: Mihai Chelaru)
+ * License: GPLv3+
  * Text Domain: invisible-recaptcha
- * Domain Path: /languages
  */
 
+defined('ABSPATH') || exit;
 
 final class InvisibleReCaptcha
 {
-	CONST PLUGIN_VERSION    = '1.2.3';
+	CONST PLUGIN_VERSION    = '1.3.1';
 	CONST PLUGIN_ABBR       = 'ic';
 	CONST PLUGIN_SLUG       = 'invisible-recaptcha';
 	CONST PLUGIN_NAME       = 'Invisible reCaptcha';
@@ -45,5 +47,4 @@ final class InvisibleReCaptcha
 include __DIR__ . '/includes/MchLibAutoloader.php';
 include __DIR__ . '/engine/RequestHandler.php';
 
-(!defined('ABSPATH')) || InvisibleReCaptcha::init();
-
+InvisibleReCaptcha::init();

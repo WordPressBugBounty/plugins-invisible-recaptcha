@@ -32,7 +32,7 @@ class UltraCommunityPublicModule extends BasePublicModule
 				if(BasePublicModule::isRecaptchaValid())
 					return;
 
-				throw new \UltraCommunity\UltraCommException(__('We\'ve encountered an error while trying to validate reCaptcha!', 'invisible-recaptcha'));
+				throw new \UltraCommunity\UltraCommException(esc_html__('We\'ve encountered an error while trying to validate reCaptcha!', 'invisible-recaptcha'));
 
 			}, PHP_INT_MAX, 1);
 
@@ -50,7 +50,7 @@ class UltraCommunityPublicModule extends BasePublicModule
 				if(BasePublicModule::isRecaptchaValid())
 					return;
 
-				throw new \UltraCommunity\UltraCommException(__('We\'ve encountered an error while trying to validate reCaptcha!', 'invisible-recaptcha'));
+				throw new \UltraCommunity\UltraCommException(esc_html__('We\'ve encountered an error while trying to validate reCaptcha!', 'invisible-recaptcha'));
 
 			}, PHP_INT_MAX, 1);
 

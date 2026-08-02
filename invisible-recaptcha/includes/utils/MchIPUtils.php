@@ -194,7 +194,7 @@ final class MchIPUtils
 		$res = '';
 
 		foreach($ip as $index => $seg) {
-			while ($seg {0} == '0')
+			while ($seg[0] == '0')
 				$seg = substr($seg, 1);
 
 			if ($seg != '') {
@@ -339,8 +339,7 @@ final class MchIPUtils
 
 		while(true)
 		{
-			mt_srand();
-			$ipAddress = mt_rand(0,255).".".mt_rand(0,255).".".mt_rand(0,255).".".mt_rand(0,255);
+			$ipAddress = wp_rand(0,255).".".wp_rand(0,255).".".wp_rand(0,255).".".wp_rand(0,255);
 
 			if(!$justPublic)
 				break;
@@ -360,7 +359,7 @@ final class MchIPUtils
 		while(true)
 		{
 			//mt_srand();
-			$ipAddress = self::compressIPV6(wordwrap('2001' . substr(sha1(mt_rand()), -28), 4, ':', true));
+			$ipAddress = self::compressIPV6(wordwrap('2001' . substr(sha1(wp_rand()), -28), 4, ':', true));
 
 			if(!$justPublic)
 				break;

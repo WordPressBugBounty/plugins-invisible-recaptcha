@@ -60,13 +60,6 @@ class WooCommerceAdminModule extends BaseAdminModule
 				'LabelText'  => __('Enable Product Review Form Protection', 'invisible-recaptcha'),
 				'InputType'  => MchHtmlUtils::FORM_ELEMENT_INPUT_CHECKBOX
 			),
-			
-//			self::OPTION_CHECKOUT_FORM_PROTECTION_ENABLED  => array(
-//				'Value'      => null,
-//				'LabelText'  => __('Enable Checkout Form Protection', 'invisible-recaptcha'),
-//				'InputType'  => MchHtmlUtils::FORM_ELEMENT_INPUT_CHECKBOX,
-//				'Description' => __('If you decide to protect the checkout form, make sure you test this carefully!', 'invisible-recaptcha')
-//			),
 
 		);
 
@@ -84,17 +77,13 @@ class WooCommerceAdminModule extends BaseAdminModule
 
 
 	public function renderModuleSettingsSectionHeader( array $arrSectionInfo ) {
-		$favIconUrl = MchBaseAdminPlugin::getPluginBaseUrl() . '/assets/admin/images/woocommerce-favicon.png';
-		$favIconUrl = esc_url($favIconUrl);
-		
 		echo '<div class="mch-settings-section-header">
 				<h3>
 				
 				<a style="text-decoration: none;" href="https://wordpress.org/plugins/woocommerce/" target="_blank">
-					<img style="vertical-align:text-bottom;" src = "' . $favIconUrl . '" width="20" height="20" />
 					<span>WooCommerce</span>
 				</a>
-				'.__(' Protection Settings', 'invisible-recaptcha').'</h3>
+				'.esc_html__(' Protection Settings', 'invisible-recaptcha').'</h3>
 			</div>';
 	}
 

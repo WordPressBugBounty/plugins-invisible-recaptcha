@@ -15,7 +15,6 @@ class SettingsAdminModule extends BaseAdminModule
 	CONST OPTION_LANGUAGE   = 'Language';
 
 	CONST OPTION_BADGE_POSITION   = 'BadgePosition';
-	CONST OPTION_BADGE_CUSTOM_CSS        = 'BadgeCSS';
 
 	public function __construct()
 	{
@@ -52,14 +51,7 @@ class SettingsAdminModule extends BaseAdminModule
 					'Value'      => 'bottomright',
 					'LabelText'  => __('Badge Position', 'invisible-recaptcha'),
 					'InputType'  => MchHtmlUtils::FORM_ELEMENT_SELECT,
-					'Description' => __('Reposition the reCaptcha badge. The \'Inline\' value allows you to style it using CSS', 'invisible-recaptcha')
-			),
-
-			self::OPTION_BADGE_CUSTOM_CSS => array(
-					'Value'      => null,
-					'LabelText'  => __('Badge Custom CSS', 'invisible-recaptcha'),
-					'InputType'  => MchHtmlUtils::FORM_ELEMENT_INPUT_TEXTAREA,
-					'Description' => __('The CSS used to restyle the reCaptcha badge. This will be applied only if the badge position is set to Inline!', 'invisible-recaptcha')
+					'Description' => __('Reposition the reCaptcha badge.', 'invisible-recaptcha')
 			),
 
 		);
@@ -70,7 +62,7 @@ class SettingsAdminModule extends BaseAdminModule
 
 	public function renderModuleSettingsSectionHeader( array $arrSectionInfo ) {
 		echo '<div class="mch-settings-section-header">
-				<h3>'.__('Invisible reCaptcha Settings', 'invisible-recaptcha').'</h3>
+				<h3>'.esc_html__('Invisible reCaptcha Settings', 'invisible-recaptcha').'</h3>
 			</div>';
 	}
 
@@ -104,10 +96,6 @@ class SettingsAdminModule extends BaseAdminModule
 					'bottomleft'  => __('Bottom Left' , 'invisible-recaptcha'),
 					'inline'      => __('Inline'      , 'invisible-recaptcha'),
 				);
-			}
-
-			if($fieldKey === SettingsAdminModule::OPTION_BADGE_CUSTOM_CSS){
-				$arrFieldAttributes['style'] = 'width:390px; height:90px;';
 			}
 
 			return $arrFieldAttributes;

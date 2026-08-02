@@ -161,16 +161,16 @@ final class MchWpUtils
 		if(null !== $isSsl)
 			return $isSsl;
 
-		if (isset($_SERVER['HTTP_CF_VISITOR']) && false !== strpos($_SERVER['HTTP_CF_VISITOR'], 'https'))
+		if (isset($_SERVER['HTTP_CF_VISITOR']) && false !== strpos(sanitize_text_field(wp_unslash($_SERVER['HTTP_CF_VISITOR'])), 'https'))
 			return $isSsl = true;
 
-		if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && stripos($_SERVER['HTTP_X_FORWARDED_PROTO'], 'https') === 0)
+		if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && stripos(sanitize_text_field(wp_unslash($_SERVER['HTTP_X_FORWARDED_PROTO'])), 'https') === 0)
 			return $isSsl = true;
 
 //		if (isset($_SERVER['SERVER_PORT']) && ($_SERVER['SERVER_PORT'] == 443)) # wp is_ssl() function is looking for port 443 as well
 //			return $isSsl = true;
 
-		if(isset($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] === 'on')
+		if(isset($_SERVER['HTTP_X_FORWARDED_SSL']) && sanitize_text_field(wp_unslash($_SERVER['HTTP_X_FORWARDED_SSL'])) === 'on')
 			return $isSsl = true;
 
 		if(stripos(get_option('siteurl'), 'https') === 0)
@@ -191,10 +191,10 @@ final class MchWpUtils
 
 		$pageUrl = self::isSslRequest() ? 'https://' : 'http://';
 
-		if(isset($_SERVER['SERVER_PORT']) && ($_SERVER['SERVER_PORT'] != 80))
-			$pageUrl .= $_SERVER['SERVER_NAME' ]. ':' . $_SERVER['SERVER_PORT'] . $_SERVER['REQUEST_URI'];
+		if(isset($_SERVER['SERVER_PORT']) && ((int) $_SERVER['SERVER_PORT'] != 80))
+			$pageUrl .= sanitize_text_field(wp_unslash($_SERVER['SERVER_NAME'] ?? '')). ':' . (int) $_SERVER['SERVER_PORT'] . sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? ''));
 		else
-			$pageUrl .= $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+			$pageUrl .= sanitize_text_field(wp_unslash($_SERVER['SERVER_NAME'] ?? '')) . sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? ''));
 
 		return $pageUrl = esc_url($pageUrl);
 
@@ -216,7 +216,8 @@ final class MchWpUtils
 
 		if( empty($wpdb->blogs) )
 			return array();
-
+		
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		return false === ( $arrBlogs = $wpdb->get_col(  "SELECT blog_id FROM $wpdb->blogs WHERE archived = '0' AND spam = '0' AND deleted = '0'" ) ) ? array() : $arrBlogs;
 
 	}
@@ -337,6 +338,7 @@ final class MchWpUtils
 
 	public static function redirectToUrl($redirectUrl, $safe = false)
 	{
+		// phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect -- safe mode intentionally optional here
 		($safe) ? wp_safe_redirect(esc_url($redirectUrl)) : wp_redirect(esc_url($redirectUrl));
 		exit;
 	}

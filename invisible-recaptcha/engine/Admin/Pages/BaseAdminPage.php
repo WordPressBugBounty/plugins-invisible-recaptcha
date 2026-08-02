@@ -41,8 +41,7 @@ abstract class BaseAdminPage extends MchBaseAdminPage
 
 	public function renderNeedHelpMetaBox()
 	{
-		echo '<div><img class="logo-help" src="https://ps.w.org/invisible-recaptcha/assets/icon-128x128.png" /></div>';
-		echo '<p class="contact-help"> <a class = "button-primary" href="https://ultracommunity.com/forums/forum/invisible-recaptcha/" target="_blank">Get In Touch With Us</a></p>';
+		echo '<p class="contact-help"> <a class = "button-primary" href="https://wordpress.org/support/plugin/invisible-recaptcha/" target="_blank">Get In Touch With Us</a></p>';
 	}
 
 
