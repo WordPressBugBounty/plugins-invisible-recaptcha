@@ -290,9 +290,11 @@ abstract class MchBaseAdminPage
 
 	}
 
-	public function renderGroupModulesSettings(MchBaseAdminPage $pageObject, $groupIndex = null)
+	public function renderGroupModulesSettings(?MchBaseAdminPage $pageObject, $groupIndex = null)
 	{
-
+		if ($pageObject === null) {
+			return;
+		}
 		if(!is_numeric($groupIndex))
 		{
 			foreach ( func_get_args() as $receivedArgument )

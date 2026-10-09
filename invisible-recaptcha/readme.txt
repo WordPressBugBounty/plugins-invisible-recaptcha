@@ -1,20 +1,20 @@
 === Invisible reCaptcha ===
 Contributors: berrypressjonhall, berrypress
-Tags: invisible reCaptcha, woocommerce invisible reCaptcha, contact form 7 invisible reCaptcha
+Tags: recaptcha, woocommerce recaptcha, register recaptcha, contact form 7 recaptcha, captcha
 Requires at least: 4.5
-Requires PHP: 7.0
-Tested up to: 7.0
-Stable tag: 1.3.1
+Requires PHP: 7.1
+Tested up to: 7.1
+Stable tag: 1.3.2
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Invisible reCaptcha for WordPress plugin helps you to protect your sites against bad spam bots using the new Invisible reCaptcha by Google.
-
-**Notice:** As of version 1.3.0, this plugin is now maintained by [@berrypress](https://profiles.wordpress.org/berrypress/).
+Use reCaptcha v2 by Google to combat spam at your login and registration forms, WooCommerce account forms, contact forms, and more!
 
 == Description ==
 
 Invisible reCaptcha for WordPress is an extremely powerful plugin which integrates the new [Invisible reCaptcha by Google](https://www.google.com/recaptcha/intro/invisible.html) with your WordPress site.
+
+**Notice:** As of version 1.3.0, this plugin is now maintained by [@berrypress](https://profiles.wordpress.org/berrypress/).
 
 = External service disclosure =
 
@@ -82,6 +82,13 @@ Here are some useful hooks to help developers integrate Invisible reCaptcha with
 - google_invre_widget_output_html_filter - used to change the recaptcha widget output
 - google_invre_language_code_filter      - used to change the badge/challenge language code
 - google_invre_badge_position_filter     - used to change the badge position (possible returning values are: 'bottomright', 'bottomleft', 'inline')
+- google_invre_ajax_submit_classnames    - used to change the CSS class names of submit buttons that trigger reCaptcha on AJAX forms (default: array('wpcf7-submit', 'invisible-recaptcha-do-submit'))
+- google_invre_is_gf_excluded            - used to exclude a Gravity Forms form from protection (receives bool $is_excluded and int $form_id)
+`
+
+**Constants** (wp-config.php)
+`
+- INVISIBLE_RECAPTCHA_OVERRIDE - define as true to treat every request as valid (e.g. automated tests, staging) or as false to treat every request as invalid. Leave undefined for normal behavior.
 `
 > **Examples of using  Invisible reCaptcha hooks**
 
@@ -117,9 +124,12 @@ function myprefix_change_recaptcha_language($language_code){
 See all [reCaptcha Language Codes](https://developers.google.com/recaptcha/docs/language)
 
 
-> **Note: This plugin requires PHP 7.0 or higher to be activated.**
+> **Note: This plugin requires PHP 7.1 or higher to be activated.**
 
 == Upgrade Notice ==
+
+= 1.3.2 =
+* Requires PHP 7.1 or newer. Fixes the conflict with two-factor authentication plugins, adds support for wp_login_form(), and fixes several issues with Contact Form 7, Gravity Forms and WooCommerce.
 
 = 1.3.1 =
 * Maintenance release requiring PHP 7.0 or newer, updating WordPress compatibility metadata, external service disclosure, and setup documentation while removing inactive code.
@@ -128,6 +138,21 @@ See all [reCaptcha Language Codes](https://developers.google.com/recaptcha/docs/
 * In accordance with current best practices, the custom CSS feature is no longer supported in this plugin. Before updating to v1.3.0+, make a copy of any custom CSS you have defined in Invisible Recaptcha settings, and use a different method to load it on the frontend of your site.
 
 == Changelog ==
+
+= 1.3.2 =
+* Fixed conflict with two-factor authentication plugins (Wordfence, Two Factor and others): the second step of the login no longer requires a new reCAPTCHA token. A short-lived hash tied to the user is issued once reCAPTCHA has passed.
+* Added support for `wp_login_form()` via the `login_form_bottom` filter.
+* Added the `INVISIBLE_RECAPTCHA_OVERRIDE` constant to force the validation result from wp-config.php.
+* Added the `google_invre_ajax_submit_classnames` filter to customize the submit button class names used for AJAX forms.
+* Contact Form 7 and Gravity Forms: reCAPTCHA is now placed at the bottom of the form, and an existing spam verdict is no longer overridden by a valid token.
+* WooCommerce: earlier validation errors on login, registration and password reset are no longer overridden.
+* Fixed the reCAPTCHA widget being rendered for the wrong form when forms are nested.
+* Fixed a fatal error (infinite recursion) when Contact Form 7 protection was enabled.
+* Fixed `Undefined property: WP_Error::$ID` warnings when a login was rejected.
+* PHP 8.x: removed the `spl_autoload_register()` deprecation notices and the dynamic property deprecations.
+* Fixed a possible TypeError on the settings page when no page object is available.
+* Minimum supported PHP version is now 7.1.
+* Updated "Tested up to" to WordPress 7.1.
 
 = 1.3.1 =
 * Removed inactive WooCommerce checkout protection code ([commit details](https://github.com/BerryPress/invisible-recaptcha/commit/0e520ef3b74d7a413a44ee69f45c14532209b622)).

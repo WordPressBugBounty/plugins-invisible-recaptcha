@@ -58,10 +58,14 @@ class WooCommercePublicModule extends BasePublicModule
 
 		MchWpUtils::addFilterHook('woocommerce_process_login_errors', function($wpError){
 			
-			if(BasePublicModule::isRecaptchaValid())
-				return $wpError;
+			if(!BasePublicModule::isRecaptchaValid()) {
+				if (!is_wp_error($wpError)) {
+					$wpError = new \WP_Error();
+				}
+				$wpError->add(\InvisibleReCaptcha::PLUGIN_SLUG, __('Your entry appears to be spam!', 'invisible-recaptcha'));
+			}
 
-			return new \WP_Error(\InvisibleReCaptcha::PLUGIN_SLUG, __('Your entry appears to be spam!', 'invisible-recaptcha'));
+			return $wpError;
 
 		});
 
@@ -101,10 +105,14 @@ class WooCommercePublicModule extends BasePublicModule
 
 	public function validateRegistrationRequest($wpError, $userName, $password, $emailAddress)
 	{
-		if(BasePublicModule::isRecaptchaValid())
-			return $wpError;
+		if(!BasePublicModule::isRecaptchaValid()) {
+			if (!is_wp_error($wpError)) {
+				$wpError = new \WP_Error();
+			}
+			$wpError->add(\InvisibleReCaptcha::PLUGIN_SLUG, __('Your entry appears to be spam!', 'invisible-recaptcha'));
+		}
 
-		return new \WP_Error(\InvisibleReCaptcha::PLUGIN_SLUG, __('Your entry appears to be spam!', 'invisible-recaptcha'));
+		return $wpError;
 	}
 
 
@@ -112,7 +120,10 @@ class WooCommercePublicModule extends BasePublicModule
 	{
 		MchWpUtils::addActionHook('woocommerce_lostpassword_form', function(){WooCommercePublicModule::getInstance()->renderReCaptchaHolderHtmlCode();}, PHP_INT_MAX);
 
-		MchWpUtils::addFilterHook('allow_password_reset', function(){
+		MchWpUtils::addFilterHook('allow_password_reset', function($shouldAllow){
+
+			if(!$shouldAllow || is_wp_error($shouldAllow))
+				return $shouldAllow;
 
 			return BasePublicModule::isRecaptchaValid();
 

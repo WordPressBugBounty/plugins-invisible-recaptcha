@@ -8,7 +8,8 @@ use InvisibleReCaptcha\RequestHandler;
 
 class WordPressPublicModule extends BasePublicModule
 {
-	private $commentValidationHookIndex = null;
+	private $commentValidationHookIndex = null, $passedLoginReCaptchaOnCurrentRequest = false;
+	private $loginFormHookIndex = null, $loginAuthenticateFilterHookIndex = null;
 	private $arrRegistrationHooksIndex = array();
 
 
@@ -29,6 +30,8 @@ class WordPressPublicModule extends BasePublicModule
 		{
 
 			$this->loginFormHookIndex = $this->addActionHook('login_form', array($this, 'renderReCaptchaHolderHtmlCode'));
+			
+			$this->addFilterHook('login_form_bottom', array($this, 'getReCaptchaHolderHtmlCode'));
 
 			$this->addFilterHook('wp_authenticate_user',  array($this, 'validateLoginUserAuthentication'), 25, 2);
 
@@ -140,14 +143,39 @@ class WordPressPublicModule extends BasePublicModule
 
 		if(!function_exists('login_header')) // not wp-login page
 			return $wpUser;
-
-		return BasePublicModule::isRecaptchaValid()
+			
+		$userId = ($wpUser instanceof \WP_User) ? $wpUser->ID : 0;
+		$isValid = $this->maybeValidateBypassLoginRecaptchaHash($userId) || BasePublicModule::isRecaptchaValid();
+		$this->passedLoginReCaptchaOnCurrentRequest = ($isValid && $userId) ? $userId : false;
+		
+		return $isValid
 				? $wpUser
 				: new \WP_Error(\InvisibleReCaptcha::PLUGIN_SLUG,  __('Invalid username or incorrect password!', 'invisible-recaptcha'));
 
 	}
-
-
+	
+	public function getReCaptchaHolderHtmlCode($before = '')
+	{
+		if ($this->passedLoginReCaptchaOnCurrentRequest !== false) {
+			return sprintf('%s<input type="hidden" name="invisible-recaptcha-bypass" value="%s">', $before, esc_attr($this->getBypassLoginRecaptchaHash($this->passedLoginReCaptchaOnCurrentRequest)));
+		}
+		return parent::getReCaptchaHolderHtmlCode($before);
+	}
+	
+	private function getBypassLoginRecaptchaHash($userId)
+	{
+		return wp_hash('invisible_recaptcha_bypass_'.$userId.floor(time() / 3600));
+	}
+	
+	private function maybeValidateBypassLoginRecaptchaHash($userId)
+	{
+		if (empty($_POST['invisible-recaptcha-bypass']) || !$userId) {
+			return false;
+		}
+		$hash = sanitize_text_field(wp_unslash($_POST['invisible-recaptcha-bypass']));
+		return hash_equals($hash, wp_hash('invisible_recaptcha_bypass_'.$userId.floor(time() / 3600)))
+				|| hash_equals($hash, wp_hash('invisible_recaptcha_bypass_'.$userId.(floor(time() / 3600) - 1)));
+	}
 
 	public function filterCommentsSubmit($submitButtonCode)
 	{

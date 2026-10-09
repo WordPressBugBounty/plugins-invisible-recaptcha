@@ -18,25 +18,25 @@ class ContactFormsPublicModule extends BasePublicModule
 
 		if($this->getOption(ContactFormsAdminModule::OPTION_CF7_PROTECTION_ENABLED)){
 
-			MchWpUtils::addFilterHook('wpcf7_form_elements', function($outputHtml = null){
-				return $outputHtml . ContactFormsPublicModule::getInstance()->getReCaptchaHolderHtmlCode();
-			}, PHP_INT_MAX);
+			MchWpUtils::addFilterHook('wpcf7_form_elements', [$selfInstance, 'getReCaptchaHolderHtmlCode'], PHP_INT_MAX);
 
-			MchWpUtils::addFilterHook('wpcf7_spam', function(){
-				return !RequestHandler::isInvisibleReCaptchaTokenValid();
+			MchWpUtils::addFilterHook('wpcf7_spam', function($isSpam){
+				return $isSpam || !RequestHandler::isInvisibleReCaptchaTokenValid();
 			}, 9);
 		}
 
 
 		if($this->getOption(ContactFormsAdminModule::OPTION_GF_PROTECTION_ENABLED)){
 
-			MchWpUtils::addFilterHook('gform_form_tag', function($formTag, $gForm) use ($selfInstance){
-				return empty($gForm['id']) || $selfInstance->isGFormExcluded($gForm['id']) ? $formTag : $formTag . $selfInstance->getReCaptchaHolderHtmlCode();
+			MchWpUtils::addFilterHook('gform_get_form_filter', function($formHtml, $gForm) use ($selfInstance){
+				return empty($gForm['id']) || $selfInstance->isGFormExcluded($gForm['id']) ? $formHtml : str_ireplace('</form>', $selfInstance->getReCaptchaHolderHtmlCode().'</form>', $formHtml);
 			}, 1, 2);
 
 
 			MchWpUtils::addFilterHook('gform_entry_is_spam', function($isSpam, $submittedForm) use ($selfInstance){
-
+				if( $isSpam )
+					return $isSpam;
+				
 				$submittedForm   = (array)$submittedForm;
 				$submittedForm['id']   = (!empty($submittedForm['id']) ? absint($submittedForm['id'])  : null);
 

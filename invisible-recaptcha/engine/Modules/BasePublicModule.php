@@ -28,9 +28,9 @@ class BasePublicModule extends MchBasePublicModule
 	}
 
 
-	public function getReCaptchaHolderHtmlCode()
+	public function getReCaptchaHolderHtmlCode($before = '')
 	{
-		return '<div class="' . esc_attr(self::RECAPTCHA_HOLDER_CLASS_NAME) . '"></div>';
+		return $before.'<div class="' . esc_attr(self::RECAPTCHA_HOLDER_CLASS_NAME) . '"></div>';
 	}
 
 	public function renderReCaptchaHolderHtmlCode()

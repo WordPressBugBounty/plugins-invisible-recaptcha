@@ -7,8 +7,8 @@
  * @wordpress-plugin
  * Plugin Name: Invisible reCaptcha
  * Description: Integrate Google Invisible reCaptcha with WordPress.
- * Version: 1.3.1
- * Requires PHP: 7.0
+ * Version: 1.3.2
+ * Requires PHP: 7.1
  * Author: BerryPress (previously: Mihai Chelaru)
  * License: GPLv3+
  * Text Domain: invisible-recaptcha
@@ -18,7 +18,7 @@ defined('ABSPATH') || exit;
 
 final class InvisibleReCaptcha
 {
-	CONST PLUGIN_VERSION    = '1.3.1';
+	CONST PLUGIN_VERSION    = '1.3.2';
 	CONST PLUGIN_ABBR       = 'ic';
 	CONST PLUGIN_SLUG       = 'invisible-recaptcha';
 	CONST PLUGIN_NAME       = 'Invisible reCaptcha';

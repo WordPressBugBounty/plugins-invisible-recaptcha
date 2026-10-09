@@ -47,5 +47,5 @@ spl_autoload_register(function($className){
 
 	return file_exists($filePath) ? include $filePath : null;
 
-}, true, true );
+} );
 

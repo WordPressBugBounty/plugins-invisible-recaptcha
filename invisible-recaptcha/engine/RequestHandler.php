@@ -33,6 +33,9 @@ class RequestHandler
 
 	public static function isInvisibleReCaptchaTokenValid()
 	{
+		if (defined('INVISIBLE_RECAPTCHA_OVERRIDE') && is_bool(INVISIBLE_RECAPTCHA_OVERRIDE)) {
+			return INVISIBLE_RECAPTCHA_OVERRIDE;
+		}
 
 		static $requestIsValid = -1;
 		if(-1 !== $requestIsValid)
@@ -85,4 +88,4 @@ spl_autoload_register(function($className){
 
 
 
-}, true, true);
+});

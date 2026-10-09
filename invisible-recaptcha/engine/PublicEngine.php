@@ -57,6 +57,9 @@ class PublicEngine extends MchBasePublicPlugin
 			isset($arrLanguages[$languageCode]) ?: $languageCode = null;
 			unset($arrLanguages);
 		}
+		
+		// $submitButtonSelector must be HTML safe. sanitize_html_class achieves this.
+		$submitButtonSelector = '.'.implode(', .', array_filter(array_map('sanitize_html_class', apply_filters('google_invre_ajax_submit_classnames', ['wpcf7-submit', 'invisible-recaptcha-do-submit'])), 'strlen'));
 
 
 		$inlineScript = "
@@ -67,11 +70,11 @@ var renderInvisibleReCaptcha = function() {
         var form = document.forms[i];
         var holder = form.querySelector({$holderClassName});
 
-        if (null === holder) continue;
+        if (null === holder || holder.closest('form') !== form) continue;
 		holder.innerHTML = '';
 
          (function(frm){
-			var cf7SubmitElm = frm.querySelector('.wpcf7-submit');
+			var cf7SubmitElm = frm.querySelector('{$submitButtonSelector}');
             var holderId = grecaptcha.render(holder,{
                 'sitekey': {$siteKey}, 'size': 'invisible', 'badge' : {$badgePosition},
                 'callback' : function (recaptchaToken) {
